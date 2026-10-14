@@ -1,31 +1,32 @@
+import java.util.Arrays;
+
 class Solution {
     public String maxSumOfSquares(int num, int sum) {
-        // Checking if a valid number is mathematically possible
+        // Handle impossible configurations instantly
         if (sum < 1 || sum > 9 * num) {
             return "";
         }
         
+        char[] result = new char[num];
         int numNines = sum / 9;
         int remainder = sum % 9;
-        int numZeros = num - numNines - (remainder > 0 ? 1 : 0);
         
-        StringBuilder sb = new StringBuilder();
-        
-        // Append all 9s first to maximize the value
-        for (int i = 0; i < numNines; i++) {
-            sb.append('9');
+        // 1. Fill all 9s at the beginning
+        if (numNines > 0) {
+            Arrays.fill(result, 0, numNines, '9');
         }
         
-        // Append the remainder digit if it exists
+        // 2. Place the remainder digit right after the 9s (if it exists)
         if (remainder > 0) {
-            sb.append(remainder);
+            result[numNines] = (char) ('0' + remainder);
+            numNines++; // Advance pointer past the remainder
         }
         
-        // Append all trailing 0s
-        for (int i = 0; i < numZeros; i++) {
-            sb.append('0');
+        // 3. Fill the rest of the array with '0's instantly
+        if (numNines < num) {
+            Arrays.fill(result, numNines, num, '0');
         }
         
-        return sb.toString();
+        return new String(result);
     }
 }
