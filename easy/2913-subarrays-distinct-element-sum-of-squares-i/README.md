@@ -54,33 +54,46 @@ The sum of the squares of the distinct counts in all subarrays is equal to 12 + 
 ## Solution
 
 **Language:** Java  
-**Runtime:** 10 ms (beats 27.00%)  
-**Memory:** 46.7 MB (beats 75.67%)  
-**Submitted:** 2026-10-15T11:29:10.630Z  
+**Runtime:** 2 ms (beats 100.00%)  
+**Memory:** 44.1 MB (beats 100.00%)  
+**Submitted:** 2026-10-15T11:29:43.550Z  
 
 ```java
 import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
 
 class Solution {
     public int sumCounts(List<Integer> nums) {
-        int totalSum = 0;
         int n = nums.size();
+        int totalSum = 0;
         
-        // Loop through each possible starting index of the subarray
+        // Convert to primitive array to bypass List interface overhead
+        int[] arr = new int[n];
         for (int i = 0; i < n; i++) {
-            Set<Integer> distinctElements = new HashSet<>();
+            arr[i] = nums.get(i);
+        }
+        
+        // Constraints state nums[i] values are between 1 and 100
+        // We use a boolean array to track distinct values in O(1) time without allocations
+        boolean[] seen = new boolean[101];
+        
+        for (int i = 0; i < n; i++) {
+            int distinctCount = 0;
             
-            // Extend the subarray to the right, one element at a time
             for (int j = i; j < n; j++) {
-                distinctElements.add(nums.get(j));
+                int val = arr[j];
                 
-                // Get the count of distinct elements in the current subarray nums[i..j]
-                int distinctCount = distinctElements.size();
+                if (!seen[val]) {
+                    seen[val] = true;
+                    distinctCount++;
+                }
                 
-                // Add the square of the distinct count to the total sum
                 totalSum += distinctCount * distinctCount;
+            }
+            
+            // Fast reset of the boolean array for the next starting point
+            // This is much faster than recreating a new array or using a HashSet
+            for (int j = i; j < n; j++) {
+                seen[arr[j]] = false;
             }
         }
         
